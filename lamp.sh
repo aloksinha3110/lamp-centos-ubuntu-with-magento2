@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #################################################################################
-# Bash script to setup the LAMP Stack on CentOS & Ubuntu                		    #
-# Written by: Alok																                              #
-# Description: Install Linux + Apache + MySQL/MariaDB + PHP + Magento    		    #
+# Bash script to setup the LAMP Stack on CentOS & Ubuntu               		#
+# Written by: Alok				                                #
+# Description: Install Linux + Apache + MySQL/MariaDB + PHP + Magento  		#
 # Caution: Don't change anything without any basic knowledge of Linux & Bash.   #
 #################################################################################
 
