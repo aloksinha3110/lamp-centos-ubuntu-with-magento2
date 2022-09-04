@@ -35,4 +35,4 @@ chmod 755 *.sh
 ```
 
 # Bugs & Issues
-Please feel free to report any bugs or issues to us, email to: i@aloksinha.in or open issues on Github.
+Please feel free to report any bugs or issues to us, email to: i@aloksinha.in or [open issues](https://github.com/aloksinha3110/lamp-centos-ubuntu-with-magento2/issues) on Github.
