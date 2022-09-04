@@ -34,5 +34,14 @@ chmod 755 *.sh
 ./lamp.sh
 ```
 
+If your server system: Debian/Ubuntu
+```
+apt -y install wget git
+git clone https://github.com/aloksinha3110/lamp-centos-ubuntu-with-magento2.git
+cd lamp-centos-ubuntu-with-magento2
+chmod 755 *.sh
+./lamp.sh
+```
+
 # Bugs & Issues
 Please feel free to report any bugs or issues to us, email to: i@aloksinha.in or [open issues](https://github.com/aloksinha3110/lamp-centos-ubuntu-with-magento2/issues) on Github.
