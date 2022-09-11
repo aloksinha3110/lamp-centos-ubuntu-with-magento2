@@ -284,6 +284,8 @@ EOF
 yum install --enablerepo=elasticsearch elasticsearch -y
 systemctl enable elasticsearch.service
 systemctl daemon-reload
+sed -i 's/## -Xms4g/-Xms1g/g' /etc/elasticsearch/jvm.options
+sed -i 's/## -Xmx4g/-Xmx1g/g' /etc/elasticsearch/jvm.options
 systemctl start elasticsearch.service
 
 else
@@ -325,24 +327,31 @@ mv composer.phar /usr/local/bin/composer
     # Creating MySQL Database for the Magento
   if [ $DB_version -eq 1 ]; then
 	echo "Please enter root user MySQL password!"
+	echo ""
 	echo "Note: password will be hidden when typing"
 	read -s rootpasswd
+	echo ""
 	echo "Please enter the NAME of the new MySQL database! (example: database1)"
 	read dbname
+	echo ""
 	echo "Please enter the MySQL database CHARACTER SET! (example: latin1, utf8, ...)"
 	echo "Enter utf8 if you don't know what you are doing"
 	read charset
+	echo ""
 	echo "Creating new MySQL database..."
 	mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${dbname} /*\!40100 DEFAULT CHARACTER SET ${charset} */;"
 	echo "Database successfully created!"
+	echo ""
 	echo "Showing existing databases..."
 	mysql -uroot -p${rootpasswd} -e "show databases;"
 	echo ""
 	echo "Please enter the NAME of the new MySQL database user! (example: user1)"
 	read username
+	echo ""
 	echo "Please enter the PASSWORD for the new MySQL database user!"
 	echo "Note: password will be hidden when typing"
 	read -s userpass
+	echo ""
 	echo "Creating new user..."
 	mysql -uroot -p${rootpasswd} -e "CREATE USER ${username}@localhost IDENTIFIED BY '${userpass}';"
 	echo "User successfully created!"
@@ -357,10 +366,14 @@ fi
 # Creating MySQL 8.x Database for the Magento
  if [ $DB_version -eq 2 ]; then
 	read -p "Enter your MySQL root password: " rootpass
+	echo ""
 	echo "UNINSTALL COMPONENT 'file://component_validate_password';" | mysql -u root -p$rootpass
 	read -p "New Database name: " dbname
+	echo ""
 	read -p "New Database username: " username
+	echo ""
 	read -p "Enter a password for user $username: " userpass
+	echo ""
 	echo "CREATE DATABASE $dbname;" | mysql -u root -p$rootpass
 	echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$userpass';" | mysql -u root -p$rootpass
 	echo "GRANT ALL PRIVILEGES ON $dbname.* TO '$dbuser'@'localhost';" | mysql -u root -p$rootpass
@@ -398,7 +411,7 @@ echo ""
 		echo "Disabling Two Factor Auth (2FA)"
 		bin/magento module:disable Magento_TwoFactorAuth
 		echo ""
-		echo "Compiling & Deployment of the Magneto"
+		echo -e "$Green Compiling & Deployment of the Magneto $Color_Off"
 		rm -rf generated/* && php -dmemory_limit=6G bin/magento setup:upgrade && php -dmemory_limit=6G bin/magento setup:di:compile && chmod -R 777 var generated pub/static && rm -rf pub/static/frontend/ && rm -rf pub/static/adminhtml/ && rm -rf var/view_preprocessed/ && php -dmemory_limit=6G bin/magento setup:static-content:deploy de_DE en_US -f && php -dmemory_limit=6G bin/magento cache:flush && chmod -R 777 var generated pub/static
     fi
 
@@ -429,7 +442,7 @@ echo ""
 		echo "Disabling Two Factor Auth (2FA)"
 		bin/magento module:disable Magento_TwoFactorAuth
 		echo ""
-		echo "Compiling & Deployment of the Magneto"
+		echo -e "$Green Compiling & Deployment of the Magneto $Color_Off"
 		rm -rf generated/* && php -dmemory_limit=6G bin/magento setup:upgrade && php -dmemory_limit=6G bin/magento setup:di:compile && chmod -R 777 var generated pub/static && rm -rf pub/static/frontend/ && rm -rf pub/static/adminhtml/ && rm -rf var/view_preprocessed/ && php -dmemory_limit=6G bin/magento setup:static-content:deploy de_DE en_US -f && php -dmemory_limit=6G bin/magento cache:flush && chmod -R 777 var generated pub/static
 	fi
 
@@ -623,6 +636,8 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 	apt update
 	apt install elasticsearch
 	systemctl enable elasticsearch
+	sed -i 's/## -Xms4g/-Xms1g/g' /etc/elasticsearch/jvm.options
+    sed -i 's/## -Xmx4g/-Xmx1g/g' /etc/elasticsearch/jvm.options
 	systemctl restart elasticsearch
 else
     echo -e "$Red ERROR: Not Installed Successfully. Please do it manually. $Color_Off"
@@ -794,7 +809,7 @@ echo ""
 		echo "Disabling Two Factor Auth (2FA)"
 		bin/magento module:disable Magento_TwoFactorAuth
 		echo ""
-		echo "Compiling & Deployment of the Magneto"
+		echo -e "$Green Compiling & Deployment of the Magneto $Color_Off"
 		rm -rf generated/* && php -dmemory_limit=6G bin/magento setup:upgrade && php -dmemory_limit=6G bin/magento setup:di:compile && chmod -R 777 var generated pub/static && rm -rf pub/static/frontend/ && rm -rf pub/static/adminhtml/ && rm -rf var/view_preprocessed/ && php -dmemory_limit=6G bin/magento setup:static-content:deploy de_DE en_US -f && php -dmemory_limit=6G bin/magento cache:flush && chmod -R 777 var generated pub/static
     fi
 
@@ -825,7 +840,7 @@ echo ""
 		echo "Disabling Two Factor Auth (2FA)"
 		bin/magento module:disable Magento_TwoFactorAuth
 		echo ""
-		echo "Compiling & Deployment of the Magneto"
+		echo -e "$Green Compiling & Deployment of the Magneto $Color_Off"
 		rm -rf generated/* && php -dmemory_limit=6G bin/magento setup:upgrade && php -dmemory_limit=6G bin/magento setup:di:compile && chmod -R 777 var generated pub/static && rm -rf pub/static/frontend/ && rm -rf pub/static/adminhtml/ && rm -rf var/view_preprocessed/ && php -dmemory_limit=6G bin/magento setup:static-content:deploy de_DE en_US -f && php -dmemory_limit=6G bin/magento cache:flush && chmod -R 777 var generated pub/static
 	fi
 echo ""
@@ -842,7 +857,7 @@ systemctl reload sshd
 iptables -F
 echo ""
 echo "All setup has been Done!"
-
+echo ""
 
 echo -e "$Yellow######################### IMP! Information about your Server ############################$Color_Off"
 echo -e "Your Working Directory is: $DocumentRoot"
@@ -853,7 +868,7 @@ mg_backend="$(grep -m1 frontName "$DocumentRoot/app/etc/env.php" | cut -d "'" -f
 echo -e "Your Magento Backend URL:-" http://"$domain/$mg_backend"
 echo "Username: admin"
 echo "Password: admin123"
-echo -e "$Red Note:$Color_Off" Please change your password on your first login!
+echo -e "$Red Note:$Color_Off" Please change your Magento Backend password on your first login!
 echo -e "$Yellow#########################################################################################$Color_Off"
 echo ""
 
