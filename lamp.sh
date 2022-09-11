@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #################################################################################
-# Bash script to setup the LAMP Stack on CentOS & Ubuntu               		#
-# Written by: Alok				                                #
-# Description: Install Linux + Apache + MySQL/MariaDB + PHP + Magento  		#
+# Bash script to setup the LAMP Stack on CentOS & Ubuntu PM's VM Servers	#
+# Written by: Alok								#
+# Description: Install Linux + Apache + MySQL/MariaDB + PHP + Magento    	#
 # Caution: Don't change anything without any basic knowledge of Linux & Bash.   #
 #################################################################################
 
@@ -33,8 +33,8 @@ echo ""
 
 echo
 echo -e "$Purple################################################################################$Color_Off"
-echo -e "$Cyan Setup the LAMP Stack on CentOS & Ubuntu Servers $Color_Off"    
-echo -e "$Cyan Author: Alok                        				     $Color_Off"
+echo -e "$Cyan Setup the LAMP Stack on CentOS & Ubuntu on PM's VM Servers $Color_Off"    
+echo -e "$Cyan Author: Alok $Color_Off"
 echo -e "$Purple################################################################################$Color_Off"
 echo
 echo ""
@@ -65,7 +65,7 @@ echo -e "$Yellow Installing System packages on your CentOS $Color_Off"
 echo "==============================================="
 yum install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
 CentOS_PACKAGE_NAME="epel-release gcc libssh2 libssh2-devel make bind-utils wget vim htop net-tools httpd git yum-utils certbot python-certbot-apache sudo"
-yum update -y ; yum install -y $CentOS_PACKAGE_NAME
+yum update -y ; yum install -y $CentOS_PACKAGE_NAME 
 
 # Install PHP
 while true
@@ -98,6 +98,7 @@ done
 if [ $PHP_version -eq 1 ]; then
 	yum-config-manager --enable remi-php74
 	yum update -y
+	yum install -y php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo php-bcmath php-intl php-soap php-xml php-opcache
     yum -y install php74-php php74-php-mcrypt php74-php-cli php74-php-intl php74-php-imagick php74-php-gd php74-php-pdo php74-php-xml php74-php-curl php74-php-soap php74-php-mysql php74-php-ldap php74-php-zip php74-php-fileinfo php74-php-opcache php74-php-fpm php74-php-gd php74-php-json php74-php-mbstring php74-php-mysqlnd php74-php-xml php74-php-xmlrpc php74-php-opcache php74-php-pecl-zip php74-php-bcmath php74-php-sodium
     yum install ImageMagick ImageMagick-devel ImageMagick-perl php-pecl-apcu phpmyadmin -y 
     systemctl restart php74-php-fpm
@@ -106,6 +107,7 @@ fi
 if [ $PHP_version -eq 2 ]; then
 	yum-config-manager --disable 'remi-php*'
 	yum-config-manager --enable remi-php80
+	yum install -y php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo php-bcmath php-intl php-soap php-xml php-opcache
     yum -y install php80-php php80-php-mcrypt php80-php-cli php80-php-intl php80-php-imagick php80-php-gd php80-php-pdo php80-php-xml php80-php-curl php80-php-soap php80-php-mysql php80-php-ldap php80-php-zip php80-php-fileinfo php80-php-opcache php80-php-fpm php80-php-gd php80-php-json php80-php-mbstring php80-php-mysqlnd php80-php-xml php80-php-xmlrpc php80-php-opcache php80-php-pecl-zip php80-php-bcmath php80-php-sodium
     yum install ImageMagick ImageMagick-devel ImageMagick-perl php-pecl-apcu phpmyadmin -y
     systemctl restart php80-php-fpm
@@ -114,6 +116,7 @@ fi
 if [ $PHP_version -eq 3 ]; then
 	yum-config-manager --disable 'remi-php*'
 	yum-config-manager --enable   remi-php81
+	yum install -y php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo php-bcmath php-intl php-soap php-xml php-opcache
     yum -y install php81-php php81-php-mcrypt php81-php-cli php81-php-intl php81-php-imagick php81-php-gd php81-php-pdo php81-php-xml php81-php-curl php81-php-soap php81-php-mysql php81-php-ldap php81-php-zip php81-php-fileinfo php81-php-opcache php81-php-fpm php81-php-gd php81-php-json php81-php-mbstring php81-php-mysqlnd php81-php-xml php81-php-xmlrpc php81-php-opcache php81-php-pecl-zip php81-php-bcmath php81-php-sodium
     yum install ImageMagick ImageMagick-devel ImageMagick-perl php-pecl-apcu phpmyadmin -y
     systemctl restart php81-php-fpm
@@ -190,7 +193,8 @@ EOF
 	read answer
 	if [ "$answer" != "${answer#[Yy]}" ] ;then
 		certbot --apache -d $domain
-		echo "SSL active now"
+		echo ""
+		echo -e "$Yellow SSL active now on your $domain $Color_Off"
 	else
     echo -e "$Red ERROR: Not Able to active the SSL. Please do it Manually, Once your setup is done. $Color_Off"
 	fi
@@ -259,6 +263,7 @@ EOF
     echo "MySQL Install completed!"
     fi
 
+echo ""
 echo "==========================="
 echo -e "$Cyan Elasticsearch Installation $Color_Off"
 echo "==========================="
@@ -428,11 +433,18 @@ echo ""
 		rm -rf generated/* && php -dmemory_limit=6G bin/magento setup:upgrade && php -dmemory_limit=6G bin/magento setup:di:compile && chmod -R 777 var generated pub/static && rm -rf pub/static/frontend/ && rm -rf pub/static/adminhtml/ && rm -rf var/view_preprocessed/ && php -dmemory_limit=6G bin/magento setup:static-content:deploy de_DE en_US -f && php -dmemory_limit=6G bin/magento cache:flush && chmod -R 777 var generated pub/static
 	fi
 
+echo ""
 echo "==========================="
 echo -e "$Cyan Restaring HTTPD $Color_Off"
 echo "==========================="
 # HTTPD Restart
 systemctl restart httpd
+
+#Centos warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+cat <<EOF >> /etc/environment
+LANG=en_US.utf-8
+LC_ALL=en_US.utf-8
+EOF
 
 fi
 
@@ -619,6 +631,9 @@ echo ""
 echo "====================================="
 echo -e "$Cyan Installing HTTPD Web Server on your CentOS $Color_Off"
 echo "====================================="
+
+while true
+do
 # Add apache virtualhost
     #Define domain name
     read -p "(Please input domains such as: example.com):" domain
@@ -632,6 +647,8 @@ echo "====================================="
         echo "$domain is exist!"
         exit 1
     fi
+ esac
+ done
 
     #Define Website Dir
     webdir="/var/www/html/$domain"
@@ -823,19 +840,20 @@ sed -i -e 's/#Port 22/Port 2105/g' /etc/ssh/sshd_config
 sed -i -e 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config
 systemctl reload sshd
 iptables -F
-echo "Done!"
 echo ""
+echo "All setup has been Done!"
+
 
 echo -e "$Yellow######################### IMP! Information about your Server ############################$Color_Off"
 echo -e "Your Working Directory is: $DocumentRoot"
 IP=$(hostname -I | awk '{ print $2 }')
 echo -e "Your VM/Server IP Address: $IP"
-echo -e "Your New SSH Port is: 215"
+echo -e "Your New SSH Port is: 2105"
 mg_backend="$(grep -m1 frontName "$DocumentRoot/app/etc/env.php" | cut -d "'" -f 4)"
 echo -e "Your Magento Backend URL:-" http://"$domain/$mg_backend"
-Username: admin
-Password: admin123
-echo -e "$Red Note:Color_Off" Please change your password on your first login!
+echo "Username: admin"
+echo "Password: admin123"
+echo -e "$Red Note:$Color_Off" Please change your password on your first login!
 echo -e "$Yellow#########################################################################################$Color_Off"
 echo ""
 
