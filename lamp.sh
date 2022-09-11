@@ -157,7 +157,7 @@ echo "====================================="
     fi
 
     domains="echo $domain | awk '{ print $1 }'"
-    if [ -f "/etc/httpd/conf.d/$domains.conf" ]; then
+    if [ -f "/etc/httpd/conf.d/$domain.conf" ]; then
         echo "$domain is exist!"
         exit 1
     fi
@@ -441,6 +441,7 @@ echo "==========================="
 systemctl restart httpd
 
 #Centos warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+touch /etc/environment
 cat <<EOF >> /etc/environment
 LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
@@ -647,7 +648,6 @@ do
         echo "$domain is exist!"
         exit 1
     fi
- esac
  done
 
     #Define Website Dir
